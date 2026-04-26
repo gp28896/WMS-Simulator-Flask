@@ -34,7 +34,7 @@ class InventoryService:
 				r["quantity"] = str(available - deduction)
 				remaining -= deduction
 
-			if remaining > 0:
-				raise Exception("Insufficient stock. ")
+		if remaining > 0:
+			raise Exception("Insufficient stock. ")
 
-			self.repo_write_all(rows)
+		self.repo_write_all(rows)
