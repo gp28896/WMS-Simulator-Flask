@@ -7,4 +7,5 @@ def register_routes(app):
 
 	@app.route("/")
 	def home():
+		
 		return {"Message": "WMS Running"}

@@ -3,7 +3,6 @@ from dataclass import dataclass, asdict
 @dataclass
 class OrderItem:
 	
-
 	order_id: str
 	sku: str
 	quantity: int
@@ -20,6 +19,7 @@ class OrderItem:
 
 
 	def to_dict(self):
+		
 		return {
 			"order_id": self.order_id,
 			"sku": self.sku,
@@ -30,6 +30,7 @@ class OrderItem:
 
 	@staticmethod
 	def from_dict(data: dict):
+		
 		return OrderItem(
 				order_id = data["order_id"],
 				sku = data["sku"],

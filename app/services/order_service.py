@@ -7,6 +7,7 @@ class OrderServices:
 	
 
 	def __init__(self):
+		
 		self.order_repo = CSVRepository(
 				ORDER_ITEMS_CSV,
 				["order_id", "status", "timestamp"]
@@ -18,8 +19,8 @@ class OrderServices:
 
 
 	def create_order(self, items):
+		
 		order_id = str(uuid.uuid4())
-
 		self.order_repo.append(
 				{
 					"order_id": order_id,

@@ -5,10 +5,12 @@ class AllocationService:
 	
 
 	def __init__(self):
+
 		self.inventory_service = InventoryService()
 
 
 	def allocate(self, items):
+		
 		for item in items:
 			stock = self.inventory_service.get_stock(intem["sku"])
 			if stock < item["quantity"]:
