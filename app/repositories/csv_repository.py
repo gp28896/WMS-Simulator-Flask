@@ -1,32 +1,25 @@
-import json
+import csv
+from typing import List, Dict
 
-
-class JSONRepository:
-
-
-    def __init__(self, file_path: str):
-
+class CSVRepository:
+    def __init__(self, file_path: str, fieldnames: List[str]):
         self.file_path = file_path
+        self.fieldnames = fieldnames
 
-
-    def read(self):
-
+    def read_all(self) -> List[Dict]:
         try:
-            with open(self.file_path, "r") as f:
-                return json.load(f)
-
+            with open(self.file_path, "r", newline="") as f:
+                return list(csv.DictReader(f))
         except:
             return []
 
+    def write_all(self, rows: List[Dict]):
+        with open(self.file_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self.fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
 
-    def write(self, data):
-
-        with open(self.file_path, "w") as f:
-            json.dump(data, f, indent = 2)
-
-
-    def append(self, item):
-
-        data = self.read()
-        data.append(item)
-        self.write(data)
+    def append(self, row: Dict):
+        rows = self.read_all()
+        rows.append(row)
+        self.write_all(rows)

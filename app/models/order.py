@@ -1,7 +1,7 @@
-from dataclasses import dataclasses
+from dataclasses import dataclass
 from datetime import datetime
 
-@dataclass:
+@dataclass
 class Order:
 	order_id: str
 	status: str
