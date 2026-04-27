@@ -1,24 +1,23 @@
 from app.services.inventory_service import InventoryService
-from app.repositories.inventory_repo import InventoryRepository
 from app.repositories.order_repo import OrderRepository
 from app.utils.logger import logger
 
 
 class AllocationService:
+
     def __init__(self, inventory_service=None, order_repo=None):
         self.inventory_service = inventory_service or InventoryService()
         self.order_repo = order_repo or OrderRepository()
 
     def allocate(self, order_id: str, items: list):
+        inventories = self.inventory_service.repo.get_all()
         allocations = []
 
         for item in items:
             sku = item["sku"]
             required = item["quantity"]
 
-            inventories = self.inventory_service.repo.get_all()
             sku_inventories = [i for i in inventories if i.sku == sku]
-
             sku_inventories.sort(key=lambda x: x.quantity, reverse=True)
 
             remaining = required
@@ -28,6 +27,7 @@ class AllocationService:
                     break
 
                 take = min(inv.quantity, remaining)
+
                 allocations.append({
                     "warehouse_id": inv.warehouse_id,
                     "sku": sku,
@@ -38,7 +38,7 @@ class AllocationService:
                 remaining -= take
 
             if remaining > 0:
-            	# logger.error(f"Allocation failed: {e}")
+                logger.error(f"Insufficient stock for {sku}")
                 raise Exception(f"Insufficient stock for {sku}")
 
         # persist inventory
@@ -48,8 +48,9 @@ class AllocationService:
         orders = self.order_repo.get_all()
         for o in orders:
             if o.order_id == order_id:
-				logger.info(f"Allocating order {order_id}")
                 o.status = "ALLOCATED"
+                logger.info(f"Order {order_id} allocated")
+
         self.order_repo.update_all(orders)
 
         return allocations

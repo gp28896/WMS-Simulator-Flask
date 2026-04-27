@@ -14,7 +14,7 @@ class Product:
 
 		if not self.sku:
 			raise ValueError("SSKU is required")
-		if self.weight:
+		if self.weight < 0:
 			raise ValueError("Weight cannot be negative")
 
 
