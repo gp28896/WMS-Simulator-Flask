@@ -1,6 +1,8 @@
 from app.services.inventory_service import InventoryService
 from app.repositories.inventory_repo import InventoryRepository
 from app.repositories.order_repo import OrderRepository
+from app.utils.logger import logger
+
 
 class AllocationService:
     def __init__(self, inventory_service=None, order_repo=None):
@@ -36,6 +38,7 @@ class AllocationService:
                 remaining -= take
 
             if remaining > 0:
+            	# logger.error(f"Allocation failed: {e}")
                 raise Exception(f"Insufficient stock for {sku}")
 
         # persist inventory
@@ -45,6 +48,7 @@ class AllocationService:
         orders = self.order_repo.get_all()
         for o in orders:
             if o.order_id == order_id:
+				logger.info(f"Allocating order {order_id}")
                 o.status = "ALLOCATED"
         self.order_repo.update_all(orders)
 
