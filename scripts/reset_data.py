@@ -11,18 +11,19 @@ CSV_HEADERS = {
 
 
 def reset_files():
-
+    # Reset CSV files
     for file, header in CSV_HEADERS.items():
         path = os.path.join(CSV_DIR, file)
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(header)
 
+    # Reset JSON files
     for file in os.listdir(JSON_DIR):
         path = os.path.join(JSON_DIR, file)
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write("[]")
 
-if __name__ == "__main__":
 
-	reset_files()
-	print("Data reset completed successfully")	
+if __name__ == "__main__":
+    reset_files()
+    print("Data reset completed successfully")
