@@ -18,6 +18,6 @@ class AllocationService:
 
 		# deduct
 		for item in items:
-			self.inventory_service.reduce_tock(item["sku"], item["quantity"])
+			self.inventory_service.reduce_stock(item["sku"], item["quantity"])
 
 		return True
