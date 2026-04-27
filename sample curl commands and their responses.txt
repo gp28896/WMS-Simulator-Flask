@@ -1,0 +1,36 @@
+MINGW64 ~/Desktop/WMS_Flask
+$ curl http://127.0.0.1:5000/
+{
+  "Message": "WMS Running"
+}
+
+MINGW64 ~/Desktop/WMS_Flask
+$ curl -X POST http://127.0.0.1:5000/orders \
+-H "Content-Type: application/json" \
+-d '{
+  "items": [
+    {"sku": "SKU1", "quantity": 2},
+    {"sku": "SKU2", "quantity": 1}
+  ]
+}'
+{
+  "order_id": "55ebca5c-e915-403c-9a50-5493cd16d2dd"
+}
+
+
+$ curl -X POST http://127.0.0.1:5000/orders/allocate \
+-H "Content-Type: application/json" \
+-d '{"order_id":"55ebca5c-e915-403c-9a50-5493cd16d2dd","items":[{"sku":"SKU1","quantity":2},{"sku":"SKU2","quantity":1}]}'
+{
+  "Status": "Allocated"
+}
+
+
+$ curl -X POST http://127.0.0.1:5000/orders/ship \
+-H "Content-Type: application/json" \
+-d '{
+  "order_id": "55ebca5c-e915-403c-9a50-5493cd16d2dd"
+}'
+{
+  "status": "shipped"
+}
