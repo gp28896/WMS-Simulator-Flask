@@ -22,7 +22,6 @@ def reset_files():
         with open(path, "w") as f:
             f.write("[]")
 
-
 if __name__ == "__main__":
 
 	reset_files()
