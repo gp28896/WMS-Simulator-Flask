@@ -19,5 +19,5 @@ def register_order_routes(app):
 	@app.route("/orders/allocate", methods=["POST"])
 	def allocate():
 			data = request.json
-			allocation_service.allocate(data["order_id"],data["items"])
+			allocation_service.allocate(data["order_id"], data["items"])
 			return {"Status": "Allocated"}

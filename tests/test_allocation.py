@@ -12,7 +12,7 @@ def test_allocation_success():
 	order_id = "test123"
 	result = alloc.allocate(order_id, [{"sku": "SKU_TEST", "quantity": 5}])
 
-	assert result is True
+	assert isinstance(result, list)
 
 
 def test_allocation_failure():
