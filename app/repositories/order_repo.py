@@ -6,7 +6,7 @@ from app.config import ORDERS_CSV
 
 class OrderRepository:
 
-
+	self.orders = {}
 	def __init__(self):
 
 		self.repo = CSVRepository(
@@ -34,3 +34,6 @@ class OrderRepository:
 
 		rows = [o.__dict__ for o in orders]
 		self.repo.write_all(rows)
+
+	def get_by_id(self, order_id):
+    	return self.orders.get(order_id)

@@ -9,53 +9,58 @@ class AllocationService:
         self.inventory_service = inventory_service or InventoryService()
         self.order_repo = order_repo or OrderRepository()
 
+
     def allocate(self, order_id: str, items: list):
-        inventories = self.inventory_service.repo.get_all()
-        allocations = []
+    import copy
 
-        for item in items:
-            sku = item["sku"]
-            required = item["quantity"]
+    inventories = self.inventory_service.repo.get_all()
+    inventories_copy = copy.deepcopy(inventories)
 
-            sku_inventories = [i for i in inventories if i.sku == sku]
-            sku_inventories.sort(key=lambda x: x.quantity, reverse=True)
+    allocations = []
 
-            remaining = required
+    order = self.order_repo.get_by_id(order_id)
+    if not order:
+        raise Exception("Order not found")
 
-            for inv in sku_inventories:
-                if remaining <= 0:
-                    break
+    for item in items:
+        if "sku" not in item or "quantity" not in item:
+            raise Exception("Invalid item format")
 
-                take = min(inv.quantity, remaining)
+        sku = item["sku"]
+        required = item["quantity"]
 
-                allocations.append({
-                    "warehouse_id": inv.warehouse_id,
-                    "sku": sku,
-                    "allocated": take
-                })
+        sku_inventories = [i for i in inventories_copy if i.sku == sku]
 
-                inv.quantity -= take
-                remaining -= take
+        if not sku_inventories:
+            raise Exception(f"SKU {sku} not found")
 
-            if remaining > 0:
-                logger.error(f"Insufficient stock for {sku}")
-                raise Exception(f"Insufficient stock for {sku}")
+        sku_inventories.sort(key=lambda x: x.quantity, reverse=True)
 
-        # persist inventory
-        self.inventory_service.repo.update_all(inventories)
+        remaining = required
 
-        # update order status
-        found = False
-
-        for o in orders:
-            if o.order_id == order_id:
-                o.status = "ALLOCATED"
-                found = True
-                logger.info(f"Order {order_id} allocated")
+        for inv in sku_inventories:
+            if remaining <= 0:
                 break
 
-        if not found:
-            raise Exception(f"Order {order_id} not found")
-                self.order_repo.update_all(orders)
+            take = min(inv.quantity, remaining)
 
-        return allocations
+            allocations.append({
+                "warehouse_id": inv.warehouse_id,
+                "sku": sku,
+                "allocated": take
+            })
+
+            inv.quantity -= take
+            remaining -= take
+
+        if remaining > 0:
+            logger.error(f"Insufficient stock for {sku}")
+            raise Exception(f"Insufficient stock for {sku}")
+
+    # persist ONLY after success
+    self.inventory_service.repo.update_all(inventories_copy)
+
+    order.status = "ALLOCATED"
+    self.order_repo.update(order)
+
+    return allocations
