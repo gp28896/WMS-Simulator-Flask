@@ -6,40 +6,35 @@ from app.utils.time_utils import current_timestamp
 
 class ShipmentService:
 
+    def __init__(self, order_repo=None, item_repo=None, event_repo=None):
+        self.order_repo = order_repo or OrderRepository()
+        self.item_repo = item_repo or OrderItemRepository()
+        self.event_repo = event_repo or EventRepository()
 
-	def __init__(self):
+    def ship_order(self, order_id: str):
+        orders = self.order_repo.get_all()
 
-		self.order_repo = OrderRepository()
-		self.item_repo = OrderItemRepository()
-		self.event_repo = EventRepository()
+        for order in orders:
+            if order.order_id == order_id:
+                if order.status != "ALLOCATED":
+                    raise Exception("Order must be allocated before shipping")
 
+                order.status = "SHIPPED"
+                break
+        else:
+            raise Exception("Order not found")
 
-	def ship_order(self, order_id: str):
+        self.order_repo.update_all(orders)
 
-		orders = self.order_repo.get_all()
+        items = self.item_repo.get_order_by_id(order_id)
 
-		for order in orders:
-			if order.order_id == order_Id:
-				if order.status != "ALLOCATED":
-					raise Exception ("Order must be allocated before shipping")
+        for item in items:
+            self.event_repo.log_event({
+                "event": "SHIP",
+                "order_id": order_id,
+                "sku": item.sku,
+                "quantity": item.quantity,
+                "timestamp": current_timestamp()
+            })
 
-				order.staus = "SHIPPED"
-				break
-
-		else:
-			raise Exception("Order not found")
-
-		self.order_repo.update_all(orders)
-
-		items = self.item_repo.get_by_order_id(order_id)
-
-		for item in items: 
-			self.event__repo.log_event({
-				"event": "SHIP",
-				"order_id": order_id,
-				"sku": item.sku,
-				"quantity": item.quantity,
-				"timestamp": current_timestamp()
-				})
-
-		return True
+        return True
