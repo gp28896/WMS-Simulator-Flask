@@ -29,3 +29,16 @@ class OrderItemRepository:
 			for r in rows
 			if r["order_id"] == order_id
 		]
+
+
+	def get_all(self) -> List[OrderItem]:
+
+		rows = self.repo.read_all()
+		return [OrderItem.from_dict(r) fro r in rows]
+
+
+	def delete_by_order_id(slef, order_id: str):
+
+		rows = self.repo.read_all()
+		filtered = [r fro r in rows if r["order_id"] != order_id]
+		self.repo.write_all(filtered)
