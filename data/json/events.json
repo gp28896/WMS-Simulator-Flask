@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "event": "SHIP",
+    "order_id": "55ebca5c-e915-403c-9a50-5493cd16d2dd",
+    "sku": "SKU1",
+    "quantity": 2,
+    "timestamp": "2026-04-27T13:34:59.385819"
+  },
+  {
+    "event": "SHIP",
+    "order_id": "55ebca5c-e915-403c-9a50-5493cd16d2dd",
+    "sku": "SKU2",
+    "quantity": 1,
+    "timestamp": "2026-04-27T13:34:59.386612"
+  }
+]

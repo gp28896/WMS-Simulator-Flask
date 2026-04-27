@@ -1,7 +1,9 @@
 from flask import request, jsonify
 from app.services.order_service import OrderService
 from app.services.allocation_service import AllocationService
+from app.services.shipment_service import ShipmentService
 
+shipment_service = ShipmentService()
 
 order_service = OrderService()
 allocation_service = AllocationService()
@@ -21,3 +23,9 @@ def register_order_routes(app):
         data = request.json
         allocation_service.allocate(data["order_id"], data["items"])
         return {"Status": "Allocated"}
+
+    @app.route("/orders/ship", methods=["POST"])
+    def ship_order():
+        data = request.json
+        shipment_service.ship_order(data["order_id"])
+        return {"status": "shipped"}

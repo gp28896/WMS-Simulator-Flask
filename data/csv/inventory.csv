@@ -1,1 +1,4 @@
 warehouse_id,sku,quantity
+WH1,SKU1,48
+WH1,SKU2,99
+WH2,SKU3,20
