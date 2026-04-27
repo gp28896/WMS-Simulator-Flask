@@ -45,12 +45,17 @@ class AllocationService:
         self.inventory_service.repo.update_all(inventories)
 
         # update order status
-        orders = self.order_repo.get_all()
+        found = False
+
         for o in orders:
             if o.order_id == order_id:
                 o.status = "ALLOCATED"
+                found = True
                 logger.info(f"Order {order_id} allocated")
+                break
 
-        self.order_repo.update_all(orders)
+        if not found:
+            raise Exception(f"Order {order_id} not found")
+                self.order_repo.update_all(orders)
 
         return allocations
